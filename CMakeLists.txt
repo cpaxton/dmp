@@ -1,41 +1,37 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-set(ROSPACK_MAKEDIST true)
+cmake_minimum_required(VERSION 2.8.3)
+project(dmp)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(catkin REQUIRED
+  COMPONENTS roscpp rospy std_msgs message_generation
+)
 
-rosbuild_init()
+add_message_files(#DIRECTORY msg
+  FILES DMPData.msg DMPPoint.msg DMPTraj.msg
+)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+add_service_files(#DIRECTORY srv
+  FILES GetDMPPlan.srv LearnDMPFromDemo.srv SetActiveDMP.srv
+)
 
-#uncomment if you have defined messages
-rosbuild_genmsg()
-#uncomment if you have defined services
-rosbuild_gensrv()
+generate_messages(DEPENDENCIES std_msgs) 
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES dmp
+  CATKIN_DEPENDS message_runtime std_msgs
+  DEPENDS Eigen
+)
 
 find_package(Eigen REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIRS})
+include_directories(include ${EIGEN_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
+link_directories(${catkin_LIBRARY_DIRS})
 add_definitions(${EIGEN_DEFINITIONS})
 
-rosbuild_add_library(dmp src/dmp.cpp src/fourier_approx.cpp src/radial_approx.cpp)
-rosbuild_add_executable(dmp_server nodes/dmp_server.cpp)
-target_link_libraries(dmp_server dmp)
+add_library(dmp src/dmp.cpp src/fourier_approx.cpp src/radial_approx.cpp)
+add_executable(dmp_server nodes/dmp_server.cpp)
 
-rosbuild_make_distribution(0.5.0)
+add_dependencies(dmp ${PROJECT_NAME}_gencpp)
+add_dependencies(dmp_server ${PROJECT_NAME}_gencpp)
+
+target_link_libraries(dmp_server dmp ${catkin_LIBRARIES})
+

@@ -41,13 +41,15 @@
 #ifndef DMP_H_
 #define DMP_H_
 
-#include "ros/ros.h"
+#include <ros/ros.h>
+#include <math.h>
+
+#include "dmp/radial_approx.h"
+#include "dmp/fourier_approx.h"
+
 #include "dmp/LearnDMPFromDemo.h"
 #include "dmp/GetDMPPlan.h"
 #include "dmp/SetActiveDMP.h"
-#include "dmp/radial_approx.h"
-#include "dmp/fourier_approx.h"
-#include <math.h>
 
 namespace dmp{
 
