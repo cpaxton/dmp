@@ -5,6 +5,8 @@ find_package(catkin REQUIRED
   COMPONENTS roscpp rospy std_msgs message_generation
 )
 
+find_package(cmake_modules REQUIRED)
+
 add_message_files(#DIRECTORY msg
   FILES DMPData.msg DMPPoint.msg DMPTraj.msg
 )
