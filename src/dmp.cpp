@@ -88,7 +88,7 @@ void learnFromDemo(const DMPTraj &demo,
 	double *v_dot_demo = new double[n_pts];
 	double *f_domain = new double[n_pts];
 	double *f_targets = new double[n_pts];
-	FunctionApprox *f_approx = new LinearApprox();
+	FunctionApprox *f_approx = new FourierApprox(num_bases);
 
 	//Compute the DMP weights for each DOF separately
 	for(int d=0; d<dims; d++){
@@ -125,10 +125,10 @@ void learnFromDemo(const DMPTraj &demo,
 		curr_dmp->weights = f_approx->getWeights();
 		curr_dmp->k_gain = curr_k;
 		curr_dmp->d_gain = curr_d;
-                for(int i=0; i<n_pts; i++){
-                    curr_dmp->f_domain.push_back(f_domain[i]); 
-                    curr_dmp->f_targets.push_back(f_targets[i]);
-                }
+    //for(int i=0; i<n_pts; i++){
+    //  curr_dmp->f_domain.push_back(f_domain[i]); 
+    //  curr_dmp->f_targets.push_back(f_targets[i]);
+    //}
 		dmp_list.push_back(*curr_dmp);
 	}
 
@@ -185,7 +185,8 @@ void generatePlan(const vector<DMPData> &dmp_list,
 	FunctionApprox **f = new FunctionApprox*[dims];
 
 	for(int i=0; i<dims; i++)
-		f[i] = new LinearApprox(dmp_list[i].f_domain, dmp_list[i].f_targets);
+		//f[i] = new LinearApprox(dmp_list[i].f_domain, dmp_list[i].f_targets);
+		f[i] = new FourierApprox(dmp_list[i].weights);//f_domain, dmp_list[i].f_targets);
 	
 	double t = 0;
 	double f_eval;
