@@ -30,6 +30,7 @@ generate_messages()
 
 catkin_package(
 INCLUDE_DIRS include
+LIBRARIES dmp
 CATKIN_DEPENDS std_msgs message_runtime
 )
 
