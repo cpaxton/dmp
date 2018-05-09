@@ -5,8 +5,9 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+find_package(cmake_modules)
+
 find_package(catkin REQUIRED COMPONENTS
-eigen
 roscpp
 rospy
 message_generation
@@ -27,6 +28,8 @@ add_service_files(
  )
 
 generate_messages()
+
+find_package(Eigen REQUIRED)
 
 catkin_package(
 INCLUDE_DIRS include
